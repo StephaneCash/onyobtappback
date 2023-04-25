@@ -12,7 +12,7 @@ const createToken = (id) => {
 const signUp = async (req, res) => {
 
     let chars = "0123456789";
-    let codeLength = 10;
+    let codeLength = 5;
     let codeSplit = "";
 
     for (let i = 0; i <= codeLength; i++) {
@@ -22,10 +22,8 @@ const signUp = async (req, res) => {
 
     let tab = codeSplit.split('');
 
-    tab[7] = '-';
-
     let codeGenere = tab.join().replace(/[,]/g, '');
-    const num = "ON" + codeGenere;
+    const num = "ONYOBT-" + codeGenere;
 
     const { pseudo, email, password } = req.body;
 

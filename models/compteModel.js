@@ -16,6 +16,9 @@ const compteSchema = new mongoose.Schema(
         devise: {
             type: String,
             default: 'OBT'
+        },
+        pourcentage: {
+            type: Number
         }
     },
     {
