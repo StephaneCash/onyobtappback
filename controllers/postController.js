@@ -10,7 +10,7 @@ const readPost = (req, res) => {
 };
 
 const createPost = async (req, res) => {
-    const { descriprion, posterId } = req.body;
+    const { description, posterId } = req.body;
     if (req.file) {
         const nameFile = req.file.originalname;
         let len = req.file.path.split('.')[0]
@@ -21,7 +21,7 @@ const createPost = async (req, res) => {
                 const newPost = await new postModel({
                     posterId: posterId,
                     title: nameFile,
-                    descriprion: descriprion,
+                    description: description,
                     image: `api/${nameImage}`,
                     video: `api/${req.file.path}`,
                     likers: [],
@@ -39,7 +39,7 @@ const createPost = async (req, res) => {
         try {
             const newPost = await new postModel({
                 posterId: req.body.posterId,
-                message: req.body.message,
+                description: req.body.description,
                 likers: [],
                 comments: [],
             });
