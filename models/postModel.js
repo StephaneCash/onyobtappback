@@ -10,12 +10,12 @@ const PostSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        descriprion: {
+        description: {
             type: String,
             trim: true,
             maxlength: 500,
         },
-        url: {
+        image: {
             type: String,
         },
         video: {

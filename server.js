@@ -24,6 +24,8 @@ app.use('/api/codes-obt', codesObtRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
+console.log("PORT :::: ", process.env.PORT)
+
 app.listen(process.env.PORT, () => {
     console.log("Le serveur tourne sur le port ", + process.env.PORT);
 });

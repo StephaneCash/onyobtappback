@@ -14,14 +14,14 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: '1000000' },
     fileFilter: (req, file, cb) => {
-        const fileTypes = /jpeg|jpg|png|gif|mp4|mkv/
+        const fileTypes = /jpeg|jpg|png|gif|mp4|mkv|avi/
         const mimeType = fileTypes.test(file.mimetype)
         const extname = fileTypes.test(path.extname(file.originalname))
 
         if (mimeType && extname) {
             return cb(null, true)
         }
-        return cb("Veuillez fournir un bon format de fichiers à télécharger");
+        return cb( new Error ("Veuillez fournir un bon format de fichiers à télécharger"), false);
     }
 }).single('file');
 

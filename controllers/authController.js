@@ -25,34 +25,27 @@ const signUp = async (req, res) => {
     let codeGenere = tab.join().replace(/[,]/g, '');
     const num = "ONYOBT-" + codeGenere;
 
-    const { pseudo, email, password } = req.body;
+    const { pseudo, email, password, numTel } = req.body;
 
     if (password) {
         try {
             let salt = await bcrypt.genSalt();
             let passwordHash = await bcrypt.hash(password, salt);
 
-            const user = await userModel.create({ pseudo, email, password: passwordHash });
+            const user = await userModel.create({ pseudo, email, password: passwordHash, numTel });
             if (user) {
-                compteModel.create({
+                await compteModel.create({
                     userId: user._id,
                     numero: num,
                     isActive: false,
                     solde: 0
                 })
-                    .then(async () => {
-                        await passUserTransacModel.create({ idUser: user._id, password: passHash, isChange: false });
-                        res.status(201).json({ message: "User créé avec succès" });
-                    })
-                    .catch(error => {
-                        return res.status(500).json(error)
-                    })
-                res.status(201).json({ message: 'User créé avec succès' });
+
+                res.status(201).json({ message: 'Compte créé avec succès' });
             }
-        }
-        catch (err) {
+        } catch (err) {
             if (err && err.code === 11000 && err.keyValue.pseudo) {
-                return res.status(400).json({ message: "Ce pseudo est déjà pris" });
+                return res.status(400).json({ message: "Ce pseudo est déjà pris, veuillez entrer un autre" });
             } else if (err && err.code === 11000 && err.keyValue.email) {
                 return res.status(400).json({ message: "Cette adresse email est déjà prise" });
             } else {
