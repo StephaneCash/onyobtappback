@@ -147,10 +147,7 @@ const commentPost = (req, res) => {
                 { new: true }
             )
                 .then((docs) => {
-                    res.status(200).send({
-                        message: 'Commentaire ajouté avec succès',
-                        data: docs
-                    })
+                    res.status(200).send(docs)
                 })
                 .catch((err) => { return res.status(400).send({ message: err }) })
         } catch (err) {
