@@ -14,7 +14,7 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: '1000000' },
     fileFilter: (req, file, cb) => {
-        const fileTypes = /jpeg|jpg|png|gif|JPG|PNG|JPEG|GIF|mp4|avi/
+        const fileTypes = /jpeg|jpg|png|gif|JPG|PNG|JPEG|GIF|mp4|avi|MP4|MP3/
         const mimeType = fileTypes.test(file.mimetype)
         const extname = fileTypes.test(path.extname(file.originalname))
 
@@ -23,6 +23,6 @@ const upload = multer({
         }
         return cb("Veuillez fournir un bon format de fichiers à télécharger");
     }
-}).single('image');
+}).single('file');
 
 module.exports = upload
