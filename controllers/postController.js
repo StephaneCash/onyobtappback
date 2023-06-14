@@ -1,13 +1,6 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const ObjectID = require('mongoose').Types.ObjectId;
-const CloudmersiveVideoApiClient = require('cloudmersive-video-api-client');
-
-let defaultClient = CloudmersiveVideoApiClient.ApiClient.instance;
-let Apikey = defaultClient.authentications['Apikey'];
-Apikey.apiKey = '4938599e-34eb-4fc1-8159-6fa36da13726';
-
-let apiInstance = new CloudmersiveVideoApiClient.VideoApi();
 
 const readPost = (req, res) => {
     postModel.find((err, docs) => {
@@ -35,21 +28,7 @@ const createPost = async (req, res) => {
                     comments: [],
                 });
                 const post = await newPost.save();
-
-                var opts = { 
-                    'inputFile': Buffer.from(fs.readFileSync("../uploads/" + post.video).buffer), 
-                    'maxWidth': 56, 
-                    'maxHeight': 56, 
-                    'framesPerSecond': 8.14 
-                  };
-                  var callback = function(error, data, response) {
-                    if (error) {
-                      console.error(error, response);
-                    } else {
-                      console.log('API called successfully. Returned data: ' + data);
-                    }
-                  };
-                  apiInstance.videoConvertToStillFrames(opts, callback);
+                console.log(post)
                 return res.status(201).json(post);
 
             } catch (err) {
