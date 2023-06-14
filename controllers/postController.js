@@ -28,7 +28,9 @@ const createPost = async (req, res) => {
                     comments: [],
                 });
                 const post = await newPost.save();
-                return res.status(201).json(post)
+                console.log(post)
+                return res.status(201).json(post);
+
             } catch (err) {
                 return res.status(500).json({ err })
             }
