@@ -28,7 +28,7 @@ module.exports.updateUser = async (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
-        console.log(req.body)
+        console.log(req.params.id)
         if (req.file) {
             try {
                 await UserModel.findOneAndUpdate(
