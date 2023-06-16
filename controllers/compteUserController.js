@@ -89,19 +89,19 @@ module.exports.reduceCompte = async (req, res) => {
             if (num) {
                 const findUserCompte = await compteModel.findOne({ userId: id });
                 let filter = { userId: id };
-
+                console.log(findUserCompte)
                 if (findUserCompte) {
                     if (parseFloat(findUserCompte.solde) > 1) {
                         if (parseFloat(findUserCompte.solde) - parseFloat(num) >= 1) {
                             await compteModel.updateOne(filter, { solde: parseFloat(findUserCompte.solde) - parseFloat(num) });
                             res.status(200).json(
-                                await compteModel.findOne({ _id: findUserCompte._id })
+                                await compteModel.findOne({ userId: id })
                             );
                         } else {
                             return res.status(400).json({ message: "Solde insuffisant." });
                         }
                     } else {
-                        return res.status(400).json({ message: "Solde insuffisant." });
+                        return res.status(200).json(findUserCompte);
                     }
                 } else {
                     return res.status(404).json({ message: "Compte non trouvé." });
