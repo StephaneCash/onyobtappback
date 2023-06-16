@@ -114,3 +114,33 @@ module.exports.reduceCompte = async (req, res) => {
         }
     }
 };
+
+module.exports.addSoldeCompte = async (req, res) => {
+    const { num } = req.body;
+    const numFloat = parseFloat(num);
+    const id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            if (numFloat) {
+                const findUserCompte = await compteModel.findOne({ userId: id });
+                let filter = { userId: id };
+
+                if (findUserCompte) {
+                    await compteModel.updateOne(filter, { pourcentage: findUserCompte.pourcentage + numFloat });
+                    res.status(200).json(
+                        await compteModel.findOne({ _id: findUserCompte._id })
+                    );
+                } else {
+                    return res.status(404).json({ message: "Compte non trouvé." });
+                }
+            } else {
+                return res.status(400).json({ message: "Veuillez fournir la valeur de number" })
+            }
+        } catch (error) {
+            return res.status(500).json(error);
+        }
+    }
+};

@@ -25,6 +25,11 @@ const PostSchema = new mongoose.Schema(
             type: [String],
             required: true
         },
+
+        views: {
+            type: [String],
+            required: true
+        },
         comments: {
             type: [
                 {

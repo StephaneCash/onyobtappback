@@ -59,7 +59,6 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     const { email, password } = req.body;
-console.log("hjjjjjjjjjjjjjjj")
     try {
         if (password) {
             userModel.findOne({ email: email })
