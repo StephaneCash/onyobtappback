@@ -12,13 +12,17 @@ const compteSchema = new mongoose.Schema(
             required: true
         },
         isActive: Boolean,
-        solde: Number,
+        solde: {
+            type: Number,
+            default: 0
+        },
         devise: {
             type: String,
             default: 'OBT'
         },
         pourcentage: {
-            type: Number
+            type: Number,
+            default: 0
         }
     },
     {
