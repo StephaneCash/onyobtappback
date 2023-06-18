@@ -85,30 +85,22 @@ module.exports.reduceCompte = async (req, res) => {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
-            const { num } = req.body;
-            if (num) {
-                const findUserCompte = await compteModel.findOne({ userId: id });
-                let filter = { userId: id };
-                console.log(findUserCompte)
-                if (findUserCompte) {
-                    if (parseFloat(findUserCompte.solde) > 1) {
-                        if (parseFloat(findUserCompte.solde) - parseFloat(num) >= 1) {
-                            await compteModel.updateOne(filter, { solde: parseFloat(findUserCompte.solde) - parseFloat(num) });
-                            res.status(200).json(
-                                await compteModel.findOne({ userId: id })
-                            );
-                        } else {
-                            return res.status(400).json({ message: "Solde insuffisant." });
-                        }
-                    } else {
-                        return res.status(200).json(findUserCompte);
+            const findUserCompte = await compteModel.findOne({ userId: id });
+
+            compteModel.findOneAndUpdate(
+                { userId: req.params.id },
+                {
+                    $set: {
+                        solde: findUserCompte.solde - 0.002
                     }
-                } else {
-                    return res.status(404).json({ message: "Compte non trouvé." });
-                }
-            } else {
-                return res.status(400).json({ message: "Veuillez fournir la valeur de number" })
-            }
+                },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            )
+                .then((docs) => {
+                    res.status(200).json(docs)
+                })
+                .catch((err) => { return res.status(500).send({ message: err }) })
+
         } catch (error) {
             return res.status(500).json(error);
         }
@@ -119,26 +111,38 @@ module.exports.addSoldeCompte = async (req, res) => {
     const { num } = req.body;
     const numFloat = parseFloat(num);
     const id = req.params.id;
-
+    const uid = req.body.uid;
     if (!ObjectID.isValid(id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
-            if (numFloat) {
-                const findUserCompte = await compteModel.findOne({ userId: id });
-                let filter = { userId: id };
+            const findUserCompte = await compteModel.findOne({ userId: id });
 
-                if (findUserCompte) {
-                    await compteModel.updateOne(filter, { pourcentage: findUserCompte.pourcentage + numFloat });
-                    res.status(200).json(
-                        await compteModel.findOne({ _id: findUserCompte._id })
-                    );
+            await compteModel.findByIdAndUpdate(findUserCompte._id,
+                { $addToSet: { pourcUsers: uid } },
+                { new: true }
+            )
+            let isFalse = false;
+            findUserCompte.pourcUsers.map(async val => {
+                if (val === uid) {
+                    return isFalse = true;
                 } else {
-                    return res.status(404).json({ message: "Compte non trouvé." });
+                    return isFalse = false
                 }
-            } else {
-                return res.status(400).json({ message: "Veuillez fournir la valeur de number" })
+            })
+
+            if (isFalse === false) {
+                await compteModel.findOneAndUpdate(
+                    { userId: req.params.id },
+                    {
+                        $set: {
+                            pourcentage: Number.parseFloat(findUserCompte.pourcentage + 0.0005).toFixed(4)
+                        }
+                    },
+                    { new: true, upsert: true, setDefaultsOnInsert: true }
+                )
             }
+
         } catch (error) {
             return res.status(500).json(error);
         }

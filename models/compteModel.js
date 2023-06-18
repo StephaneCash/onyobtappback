@@ -20,6 +20,9 @@ const compteSchema = new mongoose.Schema(
             type: String,
             default: 'OBT'
         },
+        pourcUsers: {
+            type: [String],
+        },
         pourcentage: {
             type: Number,
             default: 0

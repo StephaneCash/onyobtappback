@@ -233,7 +233,6 @@ const getAllPostsByUserId = async (req, res) => {
 }
 
 const viewAdd = (req, res) => {
-    console.log("jkkjk")
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
