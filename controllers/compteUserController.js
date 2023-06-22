@@ -108,8 +108,6 @@ module.exports.reduceCompte = async (req, res) => {
 };
 
 module.exports.addSoldeCompte = async (req, res) => {
-    const { num } = req.body;
-    const numFloat = parseFloat(num);
     const id = req.params.id;
     const uid = req.body.uid;
     if (!ObjectID.isValid(id)) {
@@ -118,30 +116,19 @@ module.exports.addSoldeCompte = async (req, res) => {
         try {
             const findUserCompte = await compteModel.findOne({ userId: id });
 
-            await compteModel.findByIdAndUpdate(findUserCompte._id,
+            const data = await compteModel.findByIdAndUpdate(findUserCompte._id,
                 { $addToSet: { pourcUsers: uid } },
                 { new: true }
             )
-            let isFalse = false;
-            findUserCompte.pourcUsers.map(async val => {
-                if (val === uid) {
-                    return isFalse = true;
-                } else {
-                    return isFalse = false
-                }
-            })
 
-            if (isFalse === false) {
-                await compteModel.findOneAndUpdate(
-                    { userId: req.params.id },
-                    {
-                        $set: {
-                            pourcentage: Number.parseFloat(findUserCompte.pourcentage + 0.0005).toFixed(4)
-                        }
-                    },
-                    { new: true, upsert: true, setDefaultsOnInsert: true }
-                )
-            }
+            await compteModel.findOneAndUpdate(
+                { userId: req.params.id },
+                {
+                    pourcentage: Number.parseFloat(data && data.pourcUsers && data.pourcUsers.length * 0.0005).toFixed(4)
+                }
+                ,
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            )
 
         } catch (error) {
             return res.status(500).json(error);
