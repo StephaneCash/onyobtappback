@@ -78,7 +78,6 @@ module.exports.rechargeCompte = async (req, res) => {
     }
 };
 
-
 module.exports.reduceCompte = async (req, res) => {
     const id = req.params.id;
     if (!ObjectID.isValid(id)) {
@@ -124,7 +123,7 @@ module.exports.addSoldeCompte = async (req, res) => {
             await compteModel.findOneAndUpdate(
                 { userId: req.params.id },
                 {
-                    pourcentage: Number.parseFloat(data && data.pourcUsers && data.pourcUsers.length * 0.0005).toFixed(4)
+                    pourcentage: Number.parseFloat(data && data.pourcUsers && data.pourcUsers.length * 0.00025).toFixed(8)
                 }
                 ,
                 { new: true, upsert: true, setDefaultsOnInsert: true }
