@@ -1,6 +1,8 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const ObjectID = require('mongoose').Types.ObjectId;
+const ffmpeg = require("ffmpeg")
+const fs = require('fs');
 
 const readPost = (req, res) => {
     postModel.find((err, docs) => {
@@ -28,8 +30,8 @@ const createPost = async (req, res) => {
                     comments: [],
                 });
                 const post = await newPost.save();
-                console.log(post)
-                return res.status(201).json(post);
+
+                res.status(201).json(post);
 
             } catch (err) {
                 return res.status(500).json({ err })

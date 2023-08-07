@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema(
         },
         following: {
             type: [String]
+        },
+        statusLive: {
+            type: Boolean,
+        },
+        idLiveChannel: {
+            type: String
         }
     },
     {
