@@ -1,5 +1,10 @@
 const express = require('express');
 const app = express();
+const http = require("http")
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
+
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -28,6 +33,18 @@ app.use('/api/lives', liveRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
-app.listen(process.env.PORT, () => {
+io.on("connection", (socket) => {
+    console.log("Un user s'est connecté");
+
+    socket.on('send_message', (data) => {
+        io.emit('received_message', data)
+    });
+
+    socket.on('disconnect', () => {
+        console.log("Un user s'est déconnecté");
+    });
+})
+
+server.listen(process.env.PORT, () => {
     console.log("Le serveur tourne sur le port ", + process.env.PORT);
 });
