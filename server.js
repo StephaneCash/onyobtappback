@@ -23,6 +23,7 @@ const comptesRoutes = require("./routes/compte.routes");
 const codesObtRoutes = require("./routes/codesObt.routes");
 const transactionsRoutes = require("./routes/transactions.routes");
 const liveRoutes = require("./routes/lives.routes");
+const messagesRoutes = require("./routes/messages.routes");
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
@@ -30,6 +31,7 @@ app.use("/api/transactions", transactionsRoutes);
 app.use("/api/comptes", comptesRoutes);
 app.use('/api/codes-obt', codesObtRoutes);
 app.use('/api/lives', liveRoutes);
+app.use('/api/messages', messagesRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
