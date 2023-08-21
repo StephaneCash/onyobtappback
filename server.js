@@ -1,9 +1,6 @@
 const express = require('express');
 const app = express();
-const http = require("http")
-const server = http.createServer(app);
-const { Server } = require('socket.io');
-const io = new Server(server);
+const socket = require('socket.io');
 
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
@@ -24,6 +21,7 @@ const codesObtRoutes = require("./routes/codesObt.routes");
 const transactionsRoutes = require("./routes/transactions.routes");
 const liveRoutes = require("./routes/lives.routes");
 const messagesRoutes = require("./routes/messages.routes");
+const repertoiresRoutes = require("./routes/repertoire.routes");
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
@@ -32,21 +30,39 @@ app.use("/api/comptes", comptesRoutes);
 app.use('/api/codes-obt', codesObtRoutes);
 app.use('/api/lives', liveRoutes);
 app.use('/api/messages', messagesRoutes);
+app.use('/api/repertoires', repertoiresRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
-io.on("connection", (socket) => {
-    console.log("Un user s'est connecté");
-
-    socket.on('send_message', (data) => {
-        io.emit('received_message', data)
-    });
-
-    socket.on('disconnect', () => {
-        console.log("Un user s'est déconnecté");
-    });
-})
-
-server.listen(process.env.PORT, () => {
+const serveur = app.listen(process.env.PORT, () => {
     console.log("Le serveur tourne sur le port ", + process.env.PORT);
 });
+
+const io = socket(serveur, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "DELETE",],
+        credentials: true
+    }
+})
+
+global.onlineUsers = new Map();
+
+io.on('connection', (socket) => {
+
+    global.chatSocket = socket;
+    socket.on('add-user', (userId) => {
+        onlineUsers.set(userId, socket.id)
+
+        console.log("USER CONNECTE ", userId)
+    })
+
+    socket.on('send-msg', (data) => {
+        console.log(" SOCKET IO ", data)
+        const sendUserSocket = onlineUsers.get(data.to);
+
+        if (sendUserSocket) {
+            socket.to(sendUserSocket).emit("msg-received", data.message)
+        }
+    })
+})

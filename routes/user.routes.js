@@ -18,4 +18,7 @@ router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.followUser);
 router.patch('/unFollowUser/:id', userController.unFollowUser);
 
+
+router.patch('/add-contact/:id', userController.addContact);
+
 module.exports = router;

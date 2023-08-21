@@ -55,7 +55,14 @@ const userSchema = new mongoose.Schema(
         },
         idLiveChannel: {
             type: String
-        }
+        },
+        numsRep: {
+            type: [{
+                contactId: String,
+                contactNom: String,
+                contactEmail: String,
+            }],
+        },
     },
     {
         timestamps: true

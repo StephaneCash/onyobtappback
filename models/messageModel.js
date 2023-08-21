@@ -4,10 +4,12 @@ const messageSchema = new mongoose.Schema(
     {
         senderId: {
             type: String,
-            required: true
+            required: true,
+            ref: "user"
         },
         recepientId: {
             type: String,
+            ref: "user"
         },
         messageType: {
             type: String,

@@ -4,7 +4,8 @@ const compteSchema = new mongoose.Schema(
     {
         userId: {
             type: String,
-            required: true
+            required: true,
+            ref: "user"
         },
         numero: {
             type: String,

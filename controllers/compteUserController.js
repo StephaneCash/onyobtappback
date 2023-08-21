@@ -1,6 +1,15 @@
 const compteModel = require("../models/compteModel");
 const ObjectID = require('mongoose').Types.ObjectId;
 
+module.exports.getAllComptes = async (req, res) => {
+    try {
+        const comptes = await compteModel.find().populate("userId", "_id url pseudo");
+        res.status(200).json(comptes);
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+}
+
 module.exports.getUserById = async (req, res) => {
     try {
         if (!ObjectID.isValid(req.params.id)) {
@@ -13,6 +22,21 @@ module.exports.getUserById = async (req, res) => {
             } else {
                 return res.status(404).json({ message: "Aucun compte trouvé." })
             }
+        }
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+}
+
+module.exports.getAccountByNumero = async (req, res) => {
+    try {
+        const numero = req.params.id;
+
+        const accountFind = await compteModel.findOne({ numero: numero }).populate('userId', "_id pseudo")
+        if (accountFind) {
+            res.status(200).json(accountFind)
+        } else {
+            return res.status(404).json({ message: "Aucun compte trouvé." })
         }
     } catch (error) {
         return res.status(500).json(error)

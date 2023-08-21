@@ -88,6 +88,34 @@ module.exports.deleteUser = async (req, res) => {
     }
 }
 
+module.exports.addContact = (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            return UserModel.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $push: {
+                        numsRep: {
+                            contactId: req.body.contactId,
+                            contactNom: req.body.contactNom,
+                            contactEmail: req.body.contactEmail,
+                        }
+                    }
+                },
+                { new: true }
+            )
+                .then((docs) => {
+                    res.status(200).send(docs)
+                })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
+    }
+}
+
 module.exports.followUser = async (req, res) => {
     if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
