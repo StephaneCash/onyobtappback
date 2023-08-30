@@ -1,12 +1,18 @@
 const express = require('express');
 const app = express();
-const socket = require('socket.io');
+const http = require("http");
+const server = http.createServer(app);
+
+
+const { Server } = require('socket.io');
+const io = new Server(server)
 
 require('dotenv').config({ path: './config/.env' });
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
 require('./config/db');
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -34,35 +40,26 @@ app.use('/api/repertoires', repertoiresRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
-const serveur = app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log("Le serveur tourne sur le port ", + process.env.PORT);
 });
 
-const io = socket(serveur, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST", "DELETE",],
-        credentials: true
-    }
-})
-
-global.onlineUsers = new Map();
 
 io.on('connection', (socket) => {
+    socket.on('joinRoom', (room) => {
+        socket.join(room);
+        console.log("User a rejoint la room ", room)
+    });
 
-    global.chatSocket = socket;
-    socket.on('add-user', (userId) => {
-        onlineUsers.set(userId, socket.id)
+    socket.on("sendMsg", (data) => {
+        console.log(data , " MESSAGE")
+        io.to(data.room).emit("newMessage", {
+            _id: new Date().getTime(),
+            ...data,
+        })
+    });
 
-        console.log("USER CONNECTE ", userId)
-    })
-
-    socket.on('send-msg', (data) => {
-        console.log(" SOCKET IO ", data)
-        const sendUserSocket = onlineUsers.get(data.to);
-
-        if (sendUserSocket) {
-            socket.to(sendUserSocket).emit("msg-received", data.message)
-        }
+    socket.on("disconnect", () => {
+        console.log("User deconnecté ", socket.id);
     })
 })
