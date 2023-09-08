@@ -50,12 +50,19 @@ io.on('connection', (socket) => {
     });
 
     socket.on("sendMsg", (data) => {
-        console.log(data , " MESSAGE")
         io.to(data.room).emit("newMessage", {
             _id: new Date().getTime(),
             ...data,
         })
     });
+
+    socket.on('userWrite', (data)=>{
+        console.log(data , " USER WRITE")
+        io.to(data.room).emit("userWriteSignal", {
+            _id: new Date().getTime(),
+            ...data,
+        })
+    })
 
     socket.on("disconnect", () => {
         console.log("User deconnecté ", socket.id);
