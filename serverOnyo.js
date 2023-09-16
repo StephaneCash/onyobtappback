@@ -56,13 +56,20 @@ io.on('connection', (socket) => {
         })
     });
 
-    socket.on('userWrite', (data)=>{
-        console.log(data , " USER WRITE")
+    socket.on('userWrite', (data) => {
         io.to(data.room).emit("userWriteSignal", {
             _id: new Date().getTime(),
             ...data,
         })
     })
+
+    socket.on("newAppel", (data) => {
+        io.to(data.room).emit("newAppelEntrant", data)
+    });
+
+    socket.on("stopAppel", (data) => {
+        io.to(data.room).emit("stopAppelEmit", data)
+    });
 
     socket.on("disconnect", () => {
         console.log("User deconnecté ", socket.id);
