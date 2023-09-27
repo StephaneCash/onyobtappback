@@ -30,7 +30,6 @@ module.exports.newMessage = async (req, res) => {
 
 module.exports.getAllMsgsByReceiveAndSender = async (req, res) => {
     try {
-
         const { senderId, recepientId } = req.params;
         const messages = await messageModel.find({
             $or: [

@@ -26,6 +26,7 @@ const transactionsRoutes = require("./routes/transactions.routes");
 const liveRoutes = require("./routes/lives.routes");
 const messagesRoutes = require("./routes/messages.routes");
 const repertoiresRoutes = require("./routes/repertoire.routes");
+const historiquesRoutes = require("./routes/historique.routes");
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
@@ -35,6 +36,7 @@ app.use('/api/codes-obt', codesObtRoutes);
 app.use('/api/lives', liveRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/repertoires', repertoiresRoutes);
+app.use('/api/historiques', historiquesRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
@@ -69,6 +71,23 @@ io.on('connection', (socket) => {
 
     socket.on("stopAppel", (data) => {
         io.to(data.room).emit("stopAppelEmit", data)
+    });
+
+    socket.on("acceptCallVoice", (data) => {
+        io.to(data.room).emit("acceptCallVoiceEmit", data)
+    });
+
+    socket.on("acceptCallVideo", (data) => {
+        io.to(data.room).emit("acceptCallVideoEmit", data)
+    })
+
+    socket.on("newAppelVideo", (data) => {
+        console.log("NEW APPEL ::: ", data)
+        io.to(data.room).emit("newVideoAppel", data);
+    });
+
+    socket.on("stopAppelVideo", (data) => {
+        io.to(data.room).emit("stopAppelVideoEmit", data)
     });
 
     socket.on("disconnect", () => {
