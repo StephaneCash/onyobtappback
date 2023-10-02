@@ -90,6 +90,10 @@ io.on('connection', (socket) => {
         io.to(data.room).emit("stopAppelVideoEmit", data)
     });
 
+    socket.on("transfertData", (data) => {
+        io.to(data.room).emit("newCompteTransfert", data)
+    });
+
     socket.on("disconnect", () => {
         console.log("User deconnecté ", socket.id);
     })

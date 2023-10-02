@@ -25,14 +25,14 @@ const signUp = async (req, res) => {
     let codeGenere = tab.join().replace(/[,]/g, '');
     const num = "ONYOBT-" + codeGenere;
 
-    const { pseudo, email, password, numTel } = req.body;
+    const { pseudo, email, password } = req.body;
 
     if (password) {
         try {
             let salt = await bcrypt.genSalt();
             let passwordHash = await bcrypt.hash(password, salt);
 
-            const user = await userModel.create({ pseudo, email, password: passwordHash, numTel });
+            const user = await userModel.create({ pseudo, email, password: passwordHash, numTel: num });
             if (user) {
                 await compteModel.create({
                     userId: user._id,
@@ -93,9 +93,6 @@ const signIn = async (req, res) => {
     }
 }
 
-const uploadImage = (req, res) => {
-
-};
 
 module.exports = {
     signUp,

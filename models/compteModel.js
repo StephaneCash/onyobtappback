@@ -27,6 +27,9 @@ const compteSchema = new mongoose.Schema(
         pourcentage: {
             type: Number,
             default: 0
+        },
+        pin: {
+            type: String,
         }
     },
     {

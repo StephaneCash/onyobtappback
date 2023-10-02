@@ -1,5 +1,6 @@
 const compteModel = require("../models/compteModel");
 const ObjectID = require('mongoose').Types.ObjectId;
+const bcrypt = require('bcrypt');
 
 module.exports.getAllComptes = async (req, res) => {
     try {
@@ -45,23 +46,58 @@ module.exports.getAccountByNumero = async (req, res) => {
 
 module.exports.updateCompte = async (req, res) => {
     const id = req.params.id;
+    const { pin } = req.body;
     if (!ObjectID.isValid(id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
-            let compteUpdate = await compteModel.findByIdAndUpdate(
-                { _id: id },
-                req.body,
-                { new: true, upsert: true, setDefaultsOnInsert: true }
-            );
-            if (compteUpdate) {
-                res.status(200).json(compteUpdate)
+            if (pin) {
+                if (pin.length >= 4 && pin.length <= 6) {
+                    if (!/[a-z-A-Z]/.test(pin)) {
+                        let salt = await bcrypt.genSalt();
+                        let pinHash = await bcrypt.hash(req.body.pin, salt);
+                        let compteUpdate = await compteModel.findByIdAndUpdate(
+                            { _id: id },
+                            { pin: pinHash },
+                            { new: true, upsert: true, setDefaultsOnInsert: true }
+                        );
+                        if (compteUpdate) {
+                            res.status(200).json(compteUpdate)
+                        }
+                    } else {
+                        return res.status(400).json({ message: "Votre PIN ne peut pas contenir des lettres" })
+                    }
+                } else {
+                    return res.status(400).json({ message: "Votre PIN doit avoir au minimum 4 caractères et max 6" })
+                }
+            } else {
+                return res.status(400).json({ message: "PIN non défini" })
             }
         } catch (error) {
             return res.status(500).json(error);
         }
     }
 };
+
+module.exports.comparePin = async (req, res) => {
+    const { pin } = req.body;
+    const id = req.params.id;
+    try {
+        if (pin) {
+            const compte = await compteModel.findById(id);
+            const isValid = await bcrypt.compare(pin, compte.pin);
+            if (isValid) {
+                res.status(200).json({ message: "PIN valide" });
+            } else {
+                res.status(400).json({ message: "PIN invalide" });
+            }
+        } else {
+            return res.status(400).json({ message: "Veuillez entrer votre code PIN" })
+        }
+    } catch (err) {
+        return res.status(500).json({ err });
+    }
+}
 
 module.exports.rechargeCompte = async (req, res) => {
     const id = req.params.id;
@@ -101,6 +137,44 @@ module.exports.rechargeCompte = async (req, res) => {
         }
     }
 };
+
+module.exports.transfertObt = async (req, res) => {
+    try {
+        const { senderId, receivedId, montant } = req.body;
+
+        const compteSender = await compteModel.findById(senderId);
+        const compteReceived = await compteModel.findById(receivedId);
+
+        console.log(req.body)
+
+        const montantParse = parseInt(montant) + 1;
+
+        if (compteSender.solde >=  montantParse) {
+            const newCompteSender = await compteModel.findByIdAndUpdate(
+                { _id: senderId },
+                { solde: parseInt(compteSender.solde) - parseInt(montant) },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            );
+
+            const newCompteReceived = await compteModel.findByIdAndUpdate(
+                { _id: receivedId },
+                { solde: parseInt(compteReceived.solde) + parseInt(montant) },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            );
+
+            res.status(200).json(
+                {
+                    sender: newCompteSender,
+                    received: newCompteReceived
+                }
+            );
+        } else {
+            return res.status(400).json({ message: "Votre solde est insuffisant pour effectuer ce transfert" })
+        }
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+}
 
 module.exports.reduceCompte = async (req, res) => {
     const id = req.params.id;
