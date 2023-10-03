@@ -7,9 +7,12 @@ const TransactionsSchema = new mongoose.Schema(
             required: true
         },
         montant: {
-            type: String,
+            type: Number,
             trim: true,
             required: true
+        },
+        type: {
+            type: String,
         },
         statut: Boolean,
     },
