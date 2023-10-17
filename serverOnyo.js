@@ -27,6 +27,7 @@ const liveRoutes = require("./routes/lives.routes");
 const messagesRoutes = require("./routes/messages.routes");
 const repertoiresRoutes = require("./routes/repertoire.routes");
 const historiquesRoutes = require("./routes/historique.routes");
+const connexionsRoutes = require("./routes/connexions.routes");
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
@@ -37,6 +38,7 @@ app.use('/api/lives', liveRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/repertoires', repertoiresRoutes);
 app.use('/api/historiques', historiquesRoutes);
+app.use('/api/connexions', connexionsRoutes);
 
 app.use("/api/uploads", express.static('./uploads'));
 
@@ -92,6 +94,10 @@ io.on('connection', (socket) => {
 
     socket.on("transfertData", (data) => {
         io.to(data.room).emit("newCompteTransfert", data)
+    });
+
+    socket.on("connexionHand", (data) => {
+        io.to(data.room).emit("connexionHandCompte", data)
     });
 
     socket.on("disconnect", () => {

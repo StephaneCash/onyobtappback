@@ -88,7 +88,7 @@ module.exports.deleteUser = async (req, res) => {
     }
 }
 
-module.exports.addContact = (req, res) => {
+module.exports.addContact = async (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
@@ -101,17 +101,84 @@ module.exports.addContact = (req, res) => {
                             contactId: req.body.contactId,
                             contactNom: req.body.contactNom,
                             contactEmail: req.body.contactEmail,
+                            url: req.body.url,
+                            num: req.body.num,
                         }
                     }
                 },
                 { new: true }
             )
-                .then((docs) => {
-                    res.status(200).send(docs)
+                .then(async (docs) => {
+                    const sortNumsRep = docs && docs.numsRep;
+                    const size = sortNumsRep && sortNumsRep.length;
+                    res.status(200).json(sortNumsRep[size - 1])
                 })
                 .catch((err) => { return res.status(400).send({ message: err }) })
         } catch (err) {
             return res.status(400).send({ message: err })
+        }
+    }
+}
+
+module.exports.editContact = (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            return UserModel.findById(
+                req.params.id,
+                (err, docs) => {
+                    const rep = docs.numsRep.find((num) =>
+                        num._id.equals(req.body.numRepId)
+                    );
+                    if (rep) {
+                        rep.contactNom = req.body.contactNom;
+                        rep.contactEmail = req.body.contactEmail;
+                        rep.num = req.body.num;
+                        rep.username = req.body.username;
+                    } else {
+                        return res.status(404).send('Contact not found ' + req.body.numRepId);
+                    }
+
+                    return docs.save((err) => {
+                        const data = docs && docs.numsRep && docs.numsRep.filter(val => {
+                            if (val._id.toString() === req.body.numRepId) {
+                                return val
+                            }
+                        })
+                        if (!err) return res.status(200).send(data);
+                        return res.status(500).send(err);
+                    })
+                }
+            )
+        } catch (error) {
+            return res.status(400).send(error);
+        }
+    }
+}
+
+module.exports.deleteContact = (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            return UserModel.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $pull: {
+                        numsRep: {
+                            _id: req.body.numRepId
+                        }
+                    }
+                },
+                { new: true },
+                (err, docs) => {
+                    if (!err) return res.send(docs);
+                    else return res.status(500).send(err);
+                }
+            )
+        } catch (error) {
+            return res.status(400).send(error);
         }
     }
 }

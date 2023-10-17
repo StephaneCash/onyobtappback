@@ -33,7 +33,7 @@ module.exports.getAccountByNumero = async (req, res) => {
     try {
         const numero = req.params.id;
 
-        const accountFind = await compteModel.findOne({ numero: numero }).populate('userId', "_id pseudo")
+        const accountFind = await compteModel.findOne({ numero: numero }).populate('userId', "_id pseudo url")
         if (accountFind) {
             res.status(200).json(accountFind)
         } else {

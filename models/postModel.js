@@ -5,6 +5,7 @@ const PostSchema = new mongoose.Schema(
         posterId: {
             type: String,
             required: true,
+            ref: "user"
         },
         title: {
             type: String,
@@ -12,13 +13,14 @@ const PostSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            trim: true,
-            maxlength: 500,
         },
         image: {
             type: String,
         },
         video: {
+            type: String,
+        },
+        type: {
             type: String,
         },
         likers: {

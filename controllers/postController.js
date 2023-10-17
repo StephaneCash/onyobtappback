@@ -8,7 +8,7 @@ const readPost = (req, res) => {
     postModel.find((err, docs) => {
         if (!err) res.send(docs);
         else console.log('Erreur to get data : ', +err)
-    }).sort({ createdAt: -1 });
+    }).sort({ createdAt: -1 }).populate('posterId', "pseudo url statusLive idLiveChannel");
 };
 
 const createPost = async (req, res) => {
@@ -28,7 +28,8 @@ const createPost = async (req, res) => {
                     video: `api/${req.file.path}`,
                     likers: [],
                     comments: [],
-                });
+                    type: req.body.type
+                }).populate('posterId', "pseudo url statusLive idLiveChannel");
                 const post = await newPost.save();
 
                 res.status(201).json(post);
@@ -234,19 +235,19 @@ const getAllPostsByUserId = async (req, res) => {
     }
 }
 
-const viewAdd = (req, res) => {
+const viewAdd = async (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
-            postModel.findByIdAndUpdate(req.params.id,
+            const data = await postModel.findByIdAndUpdate(req.params.id,
                 { $addToSet: { views: req.body.id } },
                 { new: true }
-            )
-                .then((docs) => { res.status(200).send(docs) })
-                .catch((err) => { return res.status(500).send({ message: err }) })
+            ).populate('posterId', "pseudo url statusLive idLiveChannel");
 
-            userModel.findByIdAndUpdate(req.body.id,
+            res.status(200).json(data);
+
+            await userModel.findByIdAndUpdate(req.body.id,
                 { $addToSet: { likes: req.params.id } },
                 { new: true }
             )

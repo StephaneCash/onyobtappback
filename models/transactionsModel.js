@@ -14,6 +14,9 @@ const TransactionsSchema = new mongoose.Schema(
         type: {
             type: String,
         },
+        devise: {
+            type: String,
+        },
         statut: Boolean,
     },
     {

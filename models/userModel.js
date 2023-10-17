@@ -61,6 +61,9 @@ const userSchema = new mongoose.Schema(
                 contactId: String,
                 contactNom: String,
                 contactEmail: String,
+                url: String,
+                num: String,
+                username: String
             }],
         },
     },
