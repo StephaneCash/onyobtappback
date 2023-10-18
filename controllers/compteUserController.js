@@ -152,13 +152,13 @@ module.exports.transfertObt = async (req, res) => {
         if (compteSender.solde >=  montantParse) {
             const newCompteSender = await compteModel.findByIdAndUpdate(
                 { _id: senderId },
-                { solde: parseInt(compteSender.solde) - parseInt(montant) },
+                { solde: parseFloat(compteSender.solde) - parseInt(montant) },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             );
 
             const newCompteReceived = await compteModel.findByIdAndUpdate(
                 { _id: receivedId },
-                { solde: parseInt(compteReceived.solde) + parseInt(montant) },
+                { solde: parseFloat(compteReceived.solde) + parseInt(montant) },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             );
 
@@ -221,7 +221,7 @@ module.exports.addSoldeCompte = async (req, res) => {
             await compteModel.findOneAndUpdate(
                 { userId: req.params.id },
                 {
-                    pourcentage: Number.parseFloat(data && data.pourcUsers && data.pourcUsers.length * 0.00025).toFixed(8)
+                    pourcentage: Number.parseFloat(data && data.pourcUsers && data.pourcUsers.length * 0.0005).toFixed(8)
                 }
                 ,
                 { new: true, upsert: true, setDefaultsOnInsert: true }

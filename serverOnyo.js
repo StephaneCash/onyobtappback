@@ -93,6 +93,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on("transfertData", (data) => {
+        console.log(data, " TRANSFERT OBT")
         io.to(data.room).emit("newCompteTransfert", data)
     });
 
