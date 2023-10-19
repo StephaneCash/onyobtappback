@@ -96,7 +96,7 @@ const likePost = (req, res) => {
             postModel.findByIdAndUpdate(req.params.id,
                 { $addToSet: { likers: req.body.id } },
                 { new: true }
-            )
+            ).populate('posterId', "pseudo url statusLive idLiveChannel")
                 .then((docs) => { res.status(200).send(docs) })
                 .catch((err) => { return res.status(500).send({ message: err }) })
 
@@ -118,7 +118,7 @@ const unlikePost = async (req, res) => {
             postModel.findByIdAndUpdate(req.params.id,
                 { $pull: { likers: req.body.id } },
                 { new: true }
-            )
+            ).populate('posterId', "pseudo url statusLive idLiveChannel")
                 .then((docs) => { res.status(200).send(docs) })
                 .catch((err) => { return res.status(400).send({ message: err }) })
 
@@ -150,7 +150,7 @@ const commentPost = (req, res) => {
                     }
                 },
                 { new: true }
-            )
+            ).populate('posterId', "pseudo url statusLive idLiveChannel")
                 .then((docs) => {
                     res.status(200).send(docs)
                 })
@@ -192,6 +192,7 @@ const editCommentPost = (req, res) => {
 }
 
 const deleteCommentPost = (req, res) => {
+    console.log(req.body)
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
@@ -210,7 +211,7 @@ const deleteCommentPost = (req, res) => {
                     if (!err) return res.send(docs);
                     else return res.status(500).send(err);
                 }
-            )
+            ).populate('posterId', "pseudo url statusLive idLiveChannel");
         } catch (error) {
             return res.status(400).send(error);
         }
