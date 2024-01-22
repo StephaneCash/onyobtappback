@@ -23,4 +23,6 @@ router.patch('/add-contact/:id', userController.addContact);
 router.patch('/delete-contact/:id', userController.deleteContact);
 router.patch('/edit-contact/:id', userController.editContact);
 
+router.patch('/add-live/:id', userController.addUserLive);
+
 module.exports = router;

@@ -1,8 +1,10 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const ObjectID = require('mongoose').Types.ObjectId;
-const ffmpeg = require("ffmpeg")
-const fs = require('fs');
+
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath)
 
 const readPost = (req, res) => {
     postModel.find((err, docs) => {
@@ -15,23 +17,44 @@ const createPost = async (req, res) => {
     const { description, posterId } = req.body;
     if (req.file) {
         const nameFile = req.file.originalname;
-        let len = req.file.path.split('.')[0]
-        let nameImage = len + ".jpg";
+        const pathFile = req.file.path.split('\\').join("/");
+        const fileString = req.file.path.split("\\")[1];
+        let arr = [];
 
+        let type = req.file.mimetype && req.file.mimetype.split('/')[0];
+        
         if (req.file.size < 100000000) {
             try {
+                if (type === "video") {
+                    ffmpeg({ source: `./${pathFile}` })
+                        .on('filenames', (filenames) => {
+                            console.log("Created file names ", filenames)
+                            arr = [...filenames];
+                        })
+                        .on('end', () => {
+                            console.log("finished process")
+                        })
+                        .on('error', (err) => {
+                            console.log("Erreur :: ", err)
+                        })
+                        .takeScreenshots({
+                            filename: fileString + '.png',
+                            timemarks: [1, 2, 3, 4, 5]
+                        }, 'images');
+                }
+
                 const newPost = await new postModel({
                     posterId: posterId,
                     title: nameFile,
                     description: description,
-                    image: `api/${nameImage}`,
+                    image: type === "video" ? `api/${req.file.path}` : null,
                     video: `api/${req.file.path}`,
                     likers: [],
                     comments: [],
-                    type: req.body.type
+                    type: req.body.type,
+                    images: type === "video" && [...arr]
                 }).populate('posterId', "pseudo url statusLive idLiveChannel");
                 const post = await newPost.save();
-
                 res.status(201).json(post);
 
             } catch (err) {
@@ -62,12 +85,13 @@ const updatePost = (req, res) => {
     } else {
         const updatePosted = {
             message: req.body.message,
+            image: req.body.image
         }
         postModel.findByIdAndUpdate(
             req.params.id,
             { $set: updatePosted },
             { new: true },
-        )
+        ).populate('posterId', "pseudo url statusLive idLiveChannel")
             .then((docs) => { return res.status(200).send(docs) })
             .catch((err) => { return res.status(500).send({ message: err }) })
     }
@@ -79,10 +103,7 @@ const deletePost = (req, res) => {
     } else {
         postModel.findByIdAndRemove(req.params.id,)
             .then((docs) => {
-                return res.status(200).send({
-                    message: 'Post supprimé avec succès',
-                    data: docs
-                })
+                return res.status(200).send(docs)
             })
             .catch((err) => { return res.status(500).send({ message: err }) })
     }

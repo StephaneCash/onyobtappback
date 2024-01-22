@@ -66,6 +66,14 @@ const userSchema = new mongoose.Schema(
                 username: String
             }],
         },
+        liveUser: {
+            type: [{
+                idUser: String,
+                liveUserNom: String,
+                url: String,
+                username: String
+            }],
+        },
     },
     {
         timestamps: true

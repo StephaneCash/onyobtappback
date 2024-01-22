@@ -17,7 +17,14 @@ const messageSchema = new mongoose.Schema(
         },
         messageText: String,
         imageUrl: String,
-        timestamps: String
+        timestamps: String,
+        type: String,
+        fileDirectory: {
+            type: String,
+        },
+        time: {
+            type: String,
+        },
     },
     {
         timestamps: true

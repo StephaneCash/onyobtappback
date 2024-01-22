@@ -239,4 +239,34 @@ module.exports.unFollowUser = async (req, res) => {
     }
 }
 
-
+module.exports.addUserLive = async (req, res) => {
+    console.log(req.params, req.body)
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            return UserModel.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $push: {
+                        liveUser: {
+                            idUser: req.body.idUser,
+                            liveUserNom: req.body.liveUserNom,
+                            username: req.body.username,
+                            url: req.body.url,
+                        }
+                    }
+                },
+                { new: true }
+            )
+                .then(async (docs) => {
+                    const livesUsers = docs && docs.liveUser;
+                    const size = livesUsers && livesUsers.length;
+                    res.status(200).json(docs)
+                })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
+    }
+}

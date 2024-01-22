@@ -2,9 +2,9 @@ const messageModel = require("../models/messageModel");
 const ObjectID = require('mongoose').Types.ObjectId;
 
 module.exports.newMessage = async (req, res) => {
-    console.log(req.file, " REQ BODY")
+    console.log(req.body, " REQ BODY")
     try {
-        const { senderId, recepientId, messageText } = req.body;
+        const { senderId, recepientId, messageText, fileDirectory, type, time } = req.body;
 
         if (req.file) {
             const newMessage = await messageModel.create({
@@ -12,6 +12,7 @@ module.exports.newMessage = async (req, res) => {
                 recepientId,
                 timestamps: new Date(),
                 imageUrl: `api/${req.file.path}`,
+                time: time
             })
             res.status(201).json(newMessage)
         } else {
@@ -20,6 +21,9 @@ module.exports.newMessage = async (req, res) => {
                 recepientId,
                 messageText,
                 timestamps: new Date(),
+                type: type,
+                fileDirectory: fileDirectory,
+                time: time
             })
             res.status(201).json(newMessage)
         }
