@@ -38,7 +38,8 @@ module.exports.updateUser = async (req, res) => {
                             pseudo: req.body.pseudo,
                             url: `api/${req.file.path}`,
                             statusLive: req.body.statusLive,
-                            idLiveChannel: req.body.idLiveChannel
+                            idLiveChannel: req.body.idLiveChannel,
+                            callVoice: req.body.callVoice
                         }
                     },
                     { new: true, upsert: true, setDefaultsOnInsert: true }
@@ -59,7 +60,8 @@ module.exports.updateUser = async (req, res) => {
                             bio: req.body.bio,
                             pseudo: req.body.pseudo,
                             statusLive: req.body.statusLive,
-                            idLiveChannel: req.body.idLiveChannel
+                            idLiveChannel: req.body.idLiveChannel,
+                            callVoice: req.body.callVoice
                         }
                     },
                     { new: true, upsert: true, setDefaultsOnInsert: true }

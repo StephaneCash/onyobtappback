@@ -53,6 +53,9 @@ const userSchema = new mongoose.Schema(
         statusLive: {
             type: Boolean,
         },
+        callVoice: {
+            type: Boolean,
+        },
         idLiveChannel: {
             type: String
         },
