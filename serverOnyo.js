@@ -68,11 +68,12 @@ io.on('connection', (socket) => {
     })
 
     socket.on("newAppel", (data) => {
-        console.log(data)
         io.to(data.room).emit("newAppelEntrant", data)
     });
 
     socket.on("stopAppel", (data) => {
+        console.log("STOP APPEL EMIT EVENT")
+        console.log(data)
         io.to(data.room).emit("stopAppelEmit", data)
     });
 
