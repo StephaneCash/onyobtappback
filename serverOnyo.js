@@ -42,7 +42,7 @@ app.use('/api/connexions', connexionsRoutes);
 app.use("/api/uploads", express.static('./uploads'));
 app.use("/api/images", express.static('./images'));
 
-server.listen(5002, () => {
+server.listen(5012, () => {
     console.log("Le serveur tourne sur le port ", + process.env.PORT);
 });
 
