@@ -11,8 +11,8 @@ const cors = require('cors');
 
 require('./config/db');
 
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -72,8 +72,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on("stopAppel", (data) => {
-        console.log("STOP APPEL EMIT EVENT")
-        console.log(data)
         io.to(data.room).emit("stopAppelEmit", data)
     });
 
@@ -115,6 +113,12 @@ io.on('connection', (socket) => {
 
     socket.on("demandeRejoindreLive", (data) => {
         io.to(data.room).emit("reponseLiveJoind", data)
+    });
+
+    socket.on("newAppelGroup", (data) => {
+        console.log("APPE GROUPE")
+        console.log(data)
+        io.to(data.room).emit("emitAppelGroup", data)
     });
 
     socket.on("disconnect", () => {
