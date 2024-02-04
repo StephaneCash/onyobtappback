@@ -43,7 +43,7 @@ app.use("/api/uploads", express.static('./uploads'));
 app.use("/api/images", express.static('./images'));
 
 server.listen(5012, () => {
-    console.log("Le serveur tourne sur le port ", + process.env.PORT);
+    console.log("Le serveur tourne sur le port ", 5012);
 });
 
 
@@ -116,9 +116,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on("newAppelGroup", (data) => {
-        console.log("APPE GROUPE")
-        console.log(data)
         io.to(data.room).emit("emitAppelGroup", data)
+    });
+
+    socket.on("appelGroupeEvent", (data) => {
+        console.log("________________________________")
+        console.log(data)
+        io.to(data.room).emit("appelGroupEventEmit", data)
     });
 
     socket.on("disconnect", () => {
