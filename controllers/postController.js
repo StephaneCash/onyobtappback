@@ -213,7 +213,6 @@ const editCommentPost = (req, res) => {
 }
 
 const deleteCommentPost = (req, res) => {
-    console.log(req.body)
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
