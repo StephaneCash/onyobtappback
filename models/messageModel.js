@@ -22,6 +22,7 @@ const messageSchema = new mongoose.Schema(
         fileDirectory: {
             type: String,
         },
+        isRead: Boolean,
         time: {
             type: String,
         },

@@ -12,7 +12,8 @@ module.exports.newMessage = async (req, res) => {
                 recepientId,
                 timestamps: new Date(),
                 imageUrl: `api/${req.file.path}`,
-                time: time
+                time: time,
+                isRead: false
             })
             res.status(201).json(newMessage)
         } else {
@@ -23,7 +24,8 @@ module.exports.newMessage = async (req, res) => {
                 timestamps: new Date(),
                 type: type,
                 fileDirectory: fileDirectory,
-                time: time
+                time: time,
+                isRead: false
             })
             res.status(201).json(newMessage)
         }
@@ -31,6 +33,30 @@ module.exports.newMessage = async (req, res) => {
         return res.status(500).json(error)
     }
 }
+
+module.exports.updateUser = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            await UserModel.findOneAndUpdate(
+                { _id: req.params.id },
+                {
+                    $set: {
+                        isRead: req.body.isRead,
+                    }
+                },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            )
+                .then((docs) => {
+                    res.status(200).json(docs)
+                })
+                .catch((err) => { return res.status(500).send({ message: err }) })
+        } catch (err) {
+            return res.status(500).json({ message: err })
+        }
+    }
+};
 
 module.exports.getAllMsgsByReceiveAndSender = async (req, res) => {
     try {

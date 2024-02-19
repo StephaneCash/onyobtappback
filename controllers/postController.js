@@ -39,7 +39,7 @@ const createPost = async (req, res) => {
                         })
                         .takeScreenshots({
                             filename: fileString + '.png',
-                            timemarks: [1, 2, 3, 4, 5]
+                            timemarks: [1, 2, 3, 4]
                         }, 'images');
                 }
 
