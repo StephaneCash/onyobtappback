@@ -1,5 +1,4 @@
 /node_modules
 /config/.env
-/images/posts
-/images/profil
+/images
 /uploads
