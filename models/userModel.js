@@ -50,6 +50,9 @@ const userSchema = new mongoose.Schema(
         following: {
             type: [String]
         },
+        favoris: {
+            type: [String]
+        },
         statusLive: {
             type: Boolean,
         },

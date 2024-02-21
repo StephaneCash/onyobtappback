@@ -25,4 +25,8 @@ router.patch('/edit-contact/:id', userController.editContact);
 
 router.patch('/add-live/:id', userController.addUserLive);
 
+
+router.patch('/add-favoris/:id', userController.addFavoris);
+router.patch('/remove-favoris/:id', userController.removeFavoris);
+
 module.exports = router;

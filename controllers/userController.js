@@ -195,6 +195,7 @@ module.exports.followUser = async (req, res) => {
                 { $addToSet: { following: req.body.idToFollow } },
                 { new: true, upsert: true },
             ).then(response => {
+                console.log(response)
                 res.status(201).json(response)
             }).catch(error => {
                 return res.status(400).json({ err: error });
@@ -242,7 +243,6 @@ module.exports.unFollowUser = async (req, res) => {
 }
 
 module.exports.addUserLive = async (req, res) => {
-    console.log(req.params, req.body)
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
@@ -268,6 +268,42 @@ module.exports.addUserLive = async (req, res) => {
                 })
                 .catch((err) => { return res.status(400).send({ message: err }) })
         } catch (err) {
+            return res.status(400).send({ message: err })
+        }
+    }
+}
+
+module.exports.addFavoris = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            UserModel.findByIdAndUpdate(req.params.id,
+                { $addToSet: { favoris: req.body.id } },
+                { new: true }
+            ).then((docs) => { res.status(200).send(docs) })
+                .catch((err) => { return res.status(500).send({ message: err }) })
+        } catch (err) {
+            console.log(err)
+            return res.status(400).send({ message: err })
+        }
+    }
+}
+
+module.exports.removeFavoris = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            UserModel.findByIdAndUpdate(req.params.id,
+                { $pull: { favoris: req.body.id } },
+                { new: true }
+            ).then((docs) => {
+                res.status(200).json(docs)
+            })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            console.log(err)
             return res.status(400).send({ message: err })
         }
     }
