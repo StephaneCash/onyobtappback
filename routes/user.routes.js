@@ -3,7 +3,6 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const upload = require('../middleware/uploadImage');
 
-// Authentication
 router.post('/register', authController.signUp);
 router.post('/login', authController.signIn);
 
