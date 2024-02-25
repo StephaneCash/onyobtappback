@@ -17,9 +17,6 @@ const PostSchema = new mongoose.Schema(
         image: {
             type: String,
         },
-        video: {
-            type: String,
-        },
         type: {
             type: String,
         },
@@ -27,13 +24,12 @@ const PostSchema = new mongoose.Schema(
             type: [String],
             required: true
         },
-
+        url: {
+            type: String,
+        },
         views: {
             type: [String],
             required: true
-        },
-        images: {
-            type: [String],
         },
         comments: {
             type: [

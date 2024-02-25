@@ -21,11 +21,11 @@ const createPost = async (req, res) => {
         const fileString = req.file.path.split("\\")[1];
         let arr = [];
 
-        let type = req.file.mimetype && req.file.mimetype.split('/')[0];
-        
+        const typeMime = req.file.mimetype.split("/")[0];
+
         if (req.file.size < 100000000) {
             try {
-                if (type === "video") {
+                if (typeMime === "video") {
                     ffmpeg({ source: `./${pathFile}` })
                         .on('filenames', (filenames) => {
                             console.log("Created file names ", filenames)
@@ -39,20 +39,19 @@ const createPost = async (req, res) => {
                         })
                         .takeScreenshots({
                             filename: fileString + '.png',
-                            timemarks: [1, 2, 3, 4]
-                        }, 'images');
+                            timemarks: [1]
+                        }, 'uploads');
                 }
 
                 const newPost = await new postModel({
                     posterId: posterId,
                     title: nameFile,
                     description: description,
-                    image: type === "video" ? `api/${req.file.path}` : null,
-                    video: `api/${req.file.path}`,
+                    type: typeMime,
+                    url: `api/${req.file.path}`,
                     likers: [],
                     comments: [],
-                    type: req.body.type,
-                    images: type === "video" && [...arr]
+                    image: `api/uploads/${arr[0]}`
                 }).populate('posterId', "pseudo url statusLive idLiveChannel");
                 const post = await newPost.save();
                 res.status(201).json(post);
